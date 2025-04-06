@@ -1,41 +1,37 @@
 #!/bin/bash
 
-# Pastikan skrip dijalankan sebagai root
-if [ "$(id -u)" -ne 0 ]; then
-  echo "Harap jalankan skrip ini sebagai root atau menggunakan sudo."
-  exit 1
-fi
-
-# Update dan instal dependensi yang diperlukan
-apt update && apt install -y git curl wget zip unzip nodejs npm
-
-# Instal Yarn jika belum terinstal
-if ! command -v yarn &> /dev/null; then
-  npm install -g yarn
-fi
-
-# Tentukan direktori instalasi Pterodactyl
+# Direktori instalasi Pterodactyl
 PTERO_DIR="/var/www/pterodactyl"
 
-# Periksa apakah direktori Pterodactyl ada
-if [ ! -d "$PTERO_DIR" ]; then
-  echo "Direktori Pterodactyl tidak ditemukan di $PTERO_DIR. Harap periksa path instalasi Anda."
+# Nama file tema
+THEME_ZIP="stellar.zip"
+
+# Periksa apakah skrip dijalankan sebagai root
+if [ "$(id -u)" -ne 0 ]; then
+  echo "Harap jalankan skrip ini sebagai root atau gunakan sudo."
   exit 1
 fi
 
-# Pindah ke direktori Pterodactyl
-cd "$PTERO_DIR"
+# Periksa apakah file tema ada
+if [ ! -f "$THEME_ZIP" ]; then
+  echo "File $THEME_ZIP tidak ditemukan!"
+  exit 1
+fi
 
-# Backup panel saat ini
-cp -r "$PTERO_DIR" "${PTERO_DIR}_backup_$(date +%F_%T)"
+# Backup file dan folder yang akan ditimpa
+echo "Membuat backup file yang ada..."
+cp -r "$PTERO_DIR/resources" "$PTERO_DIR/resources_backup_$(date +%F_%T)"
+cp -r "$PTERO_DIR/routes" "$PTERO_DIR/routes_backup_$(date +%F_%T)"
+cp "$PTERO_DIR/tailwind.config.js" "$PTERO_DIR/tailwind.config.js_backup_$(date +%F_%T)"
 
-# Unduh dan ekstrak Stellar Theme versi gratis
-curl -Lo stellar-free.zip https://github.com/GriffinStellar/Stellar/releases/download/1.0.6/Stellar-Free.zip
-unzip -o stellar-free.zip
-rm stellar-free.zip
+# Ekstrak tema ke direktori Pterodactyl
+echo "Menyalin file tema ke direktori Pterodactyl..."
+unzip -o "$THEME_ZIP" -d "$PTERO_DIR"
 
-# Instal dependensi dan build ulang panel
+# Instal dependensi dan build ulang frontend
+echo "Menginstal dependensi dan membangun ulang frontend..."
+cd "$PTERO_DIR" || exit
 npm install
-npm run build:production
+npm run build
 
-echo "Instalasi tema Stellar selesai. Silakan periksa panel Anda."
+echo "Instalasi tema Stellar selesai. Silakan refresh panel Pterodactyl Anda."
