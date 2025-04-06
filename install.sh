@@ -30,7 +30,7 @@ cd "$PTERO_DIR"
 cp -r "$PTERO_DIR" "${PTERO_DIR}_backup_$(date +%F_%T)"
 
 # Unduh dan ekstrak Stellar Theme versi gratis
-curl -Lo stellar-free.zip https://github.com/GriffinStellar/Stellar/releases/latest/download/Stellar-Free.zip
+curl -Lo stellar-free.zip https://github.com/GriffinStellar/Stellar/releases/download/1.0.6/Stellar-Free.zip
 unzip -o stellar-free.zip
 rm stellar-free.zip
 
