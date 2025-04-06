@@ -1,37 +1,30 @@
 #!/bin/bash
 
-# Direktori instalasi Pterodactyl
 PTERO_DIR="/var/www/pterodactyl"
-
-# Nama file tema
 THEME_ZIP="stellar.zip"
+ZIP_URL="https://github.com/AldiXD-HACK/Stellar/raw/main/stellar.zip"
 
-# Periksa apakah skrip dijalankan sebagai root
+echo "===> Stellar Theme Installer"
+
 if [ "$(id -u)" -ne 0 ]; then
-  echo "Harap jalankan skrip ini sebagai root atau gunakan sudo."
+  echo "Jalankan skrip ini sebagai root!"
   exit 1
 fi
 
-# Periksa apakah file tema ada
-if [ ! -f "$THEME_ZIP" ]; then
-  echo "File $THEME_ZIP tidak ditemukan!"
-  exit 1
-fi
+echo "[1/4] Mendownload theme..."
+wget -q --show-progress "$ZIP_URL" -O "$THEME_ZIP"
 
-# Backup file dan folder yang akan ditimpa
-echo "Membuat backup file yang ada..."
+echo "[2/4] Backup file lama..."
 cp -r "$PTERO_DIR/resources" "$PTERO_DIR/resources_backup_$(date +%F_%T)"
 cp -r "$PTERO_DIR/routes" "$PTERO_DIR/routes_backup_$(date +%F_%T)"
-cp "$PTERO_DIR/tailwind.config.js" "$PTERO_DIR/tailwind.config.js_backup_$(date +%F_%T)"
+cp "$PTERO_DIR/tailwind.config.js" "$PTERO_DIR/tailwind.config_backup_$(date +%F_%T).js"
 
-# Ekstrak tema ke direktori Pterodactyl
-echo "Menyalin file tema ke direktori Pterodactyl..."
+echo "[3/4] Ekstrak theme..."
 unzip -o "$THEME_ZIP" -d "$PTERO_DIR"
 
-# Instal dependensi dan build ulang frontend
-echo "Menginstal dependensi dan membangun ulang frontend..."
+echo "[4/4] Build ulang asset..."
 cd "$PTERO_DIR" || exit
 npm install
 npm run build
 
-echo "Instalasi tema Stellar selesai. Silakan refresh panel Pterodactyl Anda."
+echo "Theme Stellar berhasil diinstall!"
