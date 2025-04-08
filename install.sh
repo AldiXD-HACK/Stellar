@@ -24,9 +24,7 @@ unzip -o "$THEME_ZIP" -d "$PTERO_DIR"
 
 echo "[4/4] Build ulang asset..."
 cd "$PTERO_DIR" || exit
-
-# Ini bagian penting: install npm dengan flag biar gak error
-npm install --legacy-peer-deps
+npm install
 npm run build
 
 echo "Theme Stellar berhasil diinstall!"
