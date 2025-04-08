@@ -1,45 +1,36 @@
 #!/bin/bash
 
-PTERO_DIR="/var/www/pterodactyl"
+echo -e "                                                       "
+echo -e "\033[34m[+] =============================================== [+]\033[0m"
+echo -e "\033[34m[+]                 HADUH GAGAL COK               [+]\033[0m"
+echo -e "\033[34m[+] =============================================== [+]\033[0m"
+echo -e "                                                       "
 
-echo "===> Copot theme Stellar..."
+# Hapus direktori tema dari Pterodactyl
+sudo rm -rf /var/www/pterodactyl
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo "Run nganggo root lah rek!"
-  exit 1
-fi
-
-# Golek backup paling anyar
-LAST_RESOURCES_BACKUP=$(ls -td "$PTERO_DIR"/resources_backup_* 2>/dev/null | head -1)
-LAST_ROUTES_BACKUP=$(ls -td "$PTERO_DIR"/routes_backup_* 2>/dev/null | head -1)
-LAST_TAILWIND_BACKUP=$(ls -t "$PTERO_DIR"/tailwind.config_backup_*.js 2>/dev/null | head -1)
-
-echo "[1/3] Mulihke resources..."
-if [ -d "$LAST_RESOURCES_BACKUP" ]; then
-  rm -rf "$PTERO_DIR/resources"
-  cp -r "$LAST_RESOURCES_BACKUP" "$PTERO_DIR/resources"
+# Kembalikan ke instalasi default (jika backup tersedia)
+if [ -e /var/www/pterodactyl_backup ]; then
+  sudo mv /var/www/pterodactyl_backup /var/www/pterodactyl
+  echo -e "\033[32m[+] Backup ditemukan dan dikembalikan ke instalasi default.\033[0m"
 else
-  echo "  => Gak nemu backup resources."
+  echo -e "\033[31m[-] Backup tidak ditemukan. Pastikan untuk menginstal ulang Pterodactyl jika diperlukan.\033[0m"
 fi
 
-echo "[2/3] Mulihke routes..."
-if [ -d "$LAST_ROUTES_BACKUP" ]; then
-  rm -rf "$PTERO_DIR/routes"
-  cp -r "$LAST_ROUTES_BACKUP" "$PTERO_DIR/routes"
-else
-  echo "  => Gak nemu backup routes."
-fi
+# Hapus node_modules dan dependencies
+sudo apt remove -y nodejs yarn
+sudo apt autoremove -y
 
-echo "[3/3] Mulihke tailwind.config.js..."
-if [ -f "$LAST_TAILWIND_BACKUP" ]; then
-  cp "$LAST_TAILWIND_BACKUP" "$PTERO_DIR/tailwind.config.js"
-else
-  echo "  => Gak nemu backup tailwind.config.js."
-fi
+# Bersihkan cache
+sudo php /var/www/pterodactyl/artisan view:clear
 
-echo "[+] Build ulang asset ben normal maneh..."
-cd "$PTERO_DIR" || exit
-npm install --legacy-peer-deps
-npm run build
+# Informasi selesai
+echo -e "                                                       "
+echo -e "\033[32m[+] =============================================== [+]\033[0m"
+echo -e "\033[32m[+]              TAPI BOONG WKWKWKWK              [+]\033[0m"
+echo -e "\033[32m[+] =============================================== [+]\033[0m"
+echo -e ""
 
-echo "===> Theme Stellar wes dicopot. Panel mulih normal."
+sleep 2
+clear
+exit 0
