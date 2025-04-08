@@ -1,30 +1,43 @@
 #!/bin/bash
 
-PTERO_DIR="/var/www/pterodactyl"
-THEME_ZIP="stellar.zip"
-ZIP_URL="https://github.com/AldiXD-HACK/Stellar/raw/main/stellar.zip"
+THEME_URL="https://raw.githubusercontent.com/AldiXD-HACK/Stellar/main/stellar.zip"
 
-echo "===> Stellar Theme Installer"
-
-if [ "$(id -u)" -ne 0 ]; then
-  echo "Jalankan skrip ini sebagai root!"
-  exit 1
+# Cek jika folder /root/pterodactyl ada
+if [ -e /root/pterodactyl ]; then
+  sudo rm -rf /root/pterodactyl
 fi
 
-echo "[1/4] Mendownload theme..."
-wget -q --show-progress "$ZIP_URL" -O "$THEME_ZIP"
+# Unduh tema
+wget -q "$THEME_URL"
 
-echo "[2/4] Backup file lama..."
-cp -r "$PTERO_DIR/resources" "$PTERO_DIR/resources_backup_$(date +%F_%T)"
-cp -r "$PTERO_DIR/routes" "$PTERO_DIR/routes_backup_$(date +%F_%T)"
-cp "$PTERO_DIR/tailwind.config.js" "$PTERO_DIR/tailwind.config_backup_$(date +%F_%T).js"
+# Ekstrak tema
+sudo unzip -o "$(basename "$THEME_URL")"
 
-echo "[3/4] Ekstrak theme..."
-unzip -o "$THEME_ZIP" -d "$PTERO_DIR"
+# Proses instalasi tema
+echo -e "                                                       "
+echo -e "\033[34m[+] =============================================== [+]\033[0m"
+echo -e "\033[34m[+]                 INSTA THEME By AldiXD                [+]\033[0m"
+echo -e "\033[34m[+] =============================================== [+]\033[0m"
+echo -e "                                                       "
 
-echo "[4/4] Build ulang asset..."
-cd "$PTERO_DIR" || exit
-npm install
-npm run build
+sudo cp -rfT /root/pterodactyl /var/www/pterodactyl
+curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo npm i -g yarn
+cd /var/www/pterodactyl
+yarn add react-feather
+php artisan migrate
+yarn build:production
+php artisan view:clear
+sudo rm /root/stellar.zip
+sudo rm -rf /root/pterodactyl
 
-echo "Theme Stellar berhasil diinstall!"
+echo -e "                                                       "
+echo -e "\033[32m[+] =============================================== [+]\033[0m"
+echo -e "\033[32m[+]             SUCCE COOK ASU               [+]\033[0m"
+echo -e "\033[32m[+] =============================================== [+]\033[0m"
+echo -e ""
+
+sleep 2
+clear
+exit 0
