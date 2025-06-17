@@ -279,13 +279,13 @@ cat > "$THEME_DIR/index.php" << 'EOL'
 <?php
 
 return [
-    'name' => 'Modern Theme',
+    'name' => 'CDX',
     'description' => 'Tema modern untuk Pterodactyl Panel dengan desain yang bersih dan responsif',
     'version' => '1.0.0',
     
     'author' => [
-        'name' => 'Your Name',
-        'email' => 'your@email.com',
+        'name' => 'AldiXDCodeX',
+        'email' => 'admi@aldixdcode.con',
     ],
     
     'css' => [
